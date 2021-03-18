@@ -5,4 +5,3 @@ employees_hr,employees.hr,hr.model_hr_employee,group_hr,1,1,1,1
 pos_order_cashier,pos_order.cashier,point_of_sale.model_pos_order,group_cashier,1,1,1,0
 employees_cashier,employees.cashier,hr.model_hr_employee,group_cashier,1,0,0,0
 pos_config_cashier,pos_config.cashier,point_of_sale.model_pos_config,group_cashier,1,1,1,0
-    
