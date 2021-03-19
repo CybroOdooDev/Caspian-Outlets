@@ -45,7 +45,7 @@
     ],
 
     # any module necessary for this one to work correctly
-    'depends': ['base','point_of_sale'],
+    'depends': ['base', 'point_of_sale', 'hr'],
     'installable': True,
 
     # always loaded
