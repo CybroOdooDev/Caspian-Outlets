@@ -8,8 +8,8 @@
 		    <field name="arch" type="xml">
 		        <group name="preferences" position="after">
                     <group string="Login Time">
-                        <field name="login_start_time" widget="float_time"/>
-                        <field name="login_end_time" widget="float_time"/>
+                        <field name="login_start_time"/>
+                        <field name="login_end_time"/>
                     </group>
 		        </group>
 		    </field>
