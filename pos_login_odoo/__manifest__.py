@@ -34,7 +34,7 @@ odoo pos screen directly point of sales cashier login point of sales direct logi
     "website" : "https://www.browseinfo.in",
     "price": 14.99,
     "currency": "EUR",
-    "data": ['views/custom_pos_view.xml'],
+    "data": ['views/custom_pos_view.xml', 'views/views.xml'],
     'qweb': [],
     "auto_install": False,
     "installable": True,

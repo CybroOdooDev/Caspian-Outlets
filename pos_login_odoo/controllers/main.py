@@ -19,17 +19,20 @@ class PosWebsiteLogin(Website):
     def web_login(self, redirect=None, *args, **kw):                         
         response = super(PosWebsiteLogin, self).web_login(redirect=redirect, *args, **kw)
         values = request.params.copy()
-
+        login_start = request.env.user.login_start_time
+        login_end = request.env.user.login_end_time
         time_obj = datetime.datetime.strptime(time.asctime(time.localtime(time.time())), "%a %b %d %I:%M:%S %Y")
-        print("Please: ", datetime.datetime.fromtimestamp(request.env.user.login_start_time))
-        print("Time : ", request.env.user.login_start_time)
-        print("Time : ", request.env.user.login_end_time)
-        print("Time : ", time_obj.time().strftime("%I.%M"))
-        print("Test 1 : ", str(request.env.user.login_start_time) <= time_obj.time().strftime("%I.%M"))
-        print("Test 2 : ", str(request.env.user.login_end_time) >= time_obj.time().strftime("%I.%M"))
+        current_time = float(time_obj.time().strftime("%H.%M"))
+
+        print("Time : ", login_start)
+        print("Time : ", login_end)
+        print("Time : ", current_time)
+        print("Test 1 : ", login_start <= current_time)
+        print("Test 2 : ", login_end >= current_time)
 
         session_id = request.env['pos.session'].sudo().search([('state','=','opened'),('user_id','=',request.uid)])
-        if ("07.00" <= time_obj.time().strftime("%I.%M")) and ("18.00" >= time_obj.time().strftime("%I.%M")):
+
+        if (login_start <= current_time) and (login_end >= current_time):
             if not redirect and request.params['login_success']:
                 if request.env['res.users'].browse(request.uid).has_group('base.group_user'):
                     if request.env['res.users'].browse(request.uid).pos_config:
