@@ -27,8 +27,8 @@ class PosWebsiteLogin(Website):
         print("Time : ", login_start)
         print("Time : ", login_end)
         print("Time : ", current_time)
-        print("Test 1 : ", login_start <= current_time)
-        print("Test 2 : ", login_end >= current_time)
+        print("Test 1 : ", login_start >= current_time)
+        print("Test 2 : ", login_end <= current_time)
 
         session_id = request.env['pos.session'].sudo().search([('state','=','opened'),('user_id','=',request.uid)])
 
