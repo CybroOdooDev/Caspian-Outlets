@@ -3,17 +3,17 @@
 
 from odoo import api, fields, models, _
 
+
 class res_users(models.Model):
     _inherit = 'res.users'
 
     pos_config = fields.Many2one('pos.config', string="Point of Sale")
 
-    def get_config_id(self,session_uid):
-    	
-    	user_id = self.browse(session_uid)
-    	res = False
-    	if user_id.pos_config:
-    		res = True
-    	return res
-    
+    def get_config_id(self, session_uid):
+        user_id = self.browse(session_uid)
+        res = False
+        if user_id.pos_config:
+            res = True
+        return res
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
