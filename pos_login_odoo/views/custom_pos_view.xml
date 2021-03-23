@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    	<template id="template_login" inherit_id="point_of_sale.assets">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/pos_login_odoo/static/src/js/gui.js"></script>
+            </xpath>
+        </template>
+    
+		<!-- Add custom field  -->	    
+		<record id="res_users_form_view" model="ir.ui.view">
+		    <field name="name">res.users.form.view</field>
+		    <field name="model">res.users</field>
+		    <field name="inherit_id" ref="base.view_users_form" />
+		    <field name="arch" type="xml">
+		        <group name="preferences" position="after">
+					<group string="Point Of Sale" groups="base.group_user">
+						<field name="pos_config"/>
+					</group>
+		        </group>
+		    </field>
+		</record>
+
+		<!-- <template id="error_view_list" name="My Claim">
+    		<t t-call="website.layout">
+    			<div id="wrap" class="oe_structure oe_empty">
+		            <section>
+		                <div class="container">
+		                    <div class="row">
+		                        <div class="col-md-12">
+		                            <div id="myModal" class="modal"> -->
+
+									  <!-- Modal content -->
+									  <!-- <div class="modal-content">
+									    <div class="modal-header">
+									      <span class="close"></span>
+									      <h2>Modal Header</h2>
+									    </div>
+									    <div class="modal-body">
+									      <p>Some text in the Modal Body</p>
+									      <p>Some other text...</p>
+									    </div>
+									    <div class="modal-footer">
+									      <h3>Modal Footer</h3>
+									    </div>
+									  </div>
+
+											</div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </section>
+		        </div>
+
+    		</t>
+    	</template> -->
+		
+        
+    </data>
+</odoo>

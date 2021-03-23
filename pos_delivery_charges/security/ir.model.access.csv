@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+pos_delivery_region_id,pos_delivery_region,pos_delivery_charges.model_pos_delivery_region,,1,1,1,1
+
+

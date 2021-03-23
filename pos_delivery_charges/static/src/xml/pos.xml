@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="SetDeliveryRegionButton" owl="1">
+        <span class="control-button js_discount">
+            <i class="fa fa-motorcycle"></i>
+            <span> </span>
+            <span>
+                <t t-esc='currentPricelistName'/>
+            </span>
+        </span>
+    </t>
+    <t t-extend="PosTicket">
+        <t t-jquery=".receipt-user" t-operation="after">
+            <t t-if="receipt.selected_delivery_region_name">
+                <div>
+                    Delivery Type: <t t-esc="receipt.selected_delivery_region_name"/><br />
+                </div>
+            </t>
+        </t>
+    </t>
+
+</templates>
