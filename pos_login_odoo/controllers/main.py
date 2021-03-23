@@ -59,7 +59,7 @@ class PosWebsiteLogin(Website):
         else:
             if request.env.user.login_start_time and request.env.user.login_end_time:
                 easygui.msgbox(
-                        "You can access PoS only between " + str(login_start) + " AM and " + str(24 - login_end) + " PM",
+                        "You can't access PoS right now",
                         title="AccessError")
                 redirect = '/web/session/logout'
                 return http.redirect_with_hash(redirect)
