@@ -70,5 +70,10 @@ class PosWebsiteLogin(Website):
                 values['error'] = "You can't access PoS right now"
                 return request.render('web.login', values)
         return response
+    
+    #Direct Login page
+    @http.route('/', type='http', auth='none')
+    def direct_login(self):
+        return redirect('/web/login')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
