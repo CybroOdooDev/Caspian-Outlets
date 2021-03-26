@@ -7,6 +7,7 @@ from odoo.http import request
 import datetime, time
 from odoo.addons.website.controllers.main import Website
 _logger = logging.getLogger(__name__)
+from werkzeug.utils import redirect
 
 
 class PosWebsiteLogin(Website):
