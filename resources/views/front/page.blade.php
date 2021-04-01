@@ -34,6 +34,7 @@
           <h4 class="title">
             {{ $page->title }}
           </h4>
+          <hr style="margin-bottom: -2% !important;">
           <p>
             {!! $page->details !!}
           </p>

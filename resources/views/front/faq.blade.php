@@ -13,7 +13,7 @@
             </a>
           </li>
           <li>
-            <a href="{{ route('front.Faq') }}">
+            <a href="{{ route('front.faq') }}">
               {{ $langg->lang19 }}
             </a>
           </li>

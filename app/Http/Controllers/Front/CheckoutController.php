@@ -379,7 +379,6 @@ class CheckoutController extends Controller
             }
             }
             $order = new Order;
-            // $success_url = action('Front\PaymentController@payreturn');
             $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
             $success_url = $actual_link.'/checkout/payment/return';
             $item_name = $gs->title." Order";
@@ -388,7 +387,7 @@ class CheckoutController extends Controller
             $order['cart'] = utf8_encode(bzcompress(serialize($cart), 9)); 
             $order['totalQty'] = $orderDetails['totalQty'];
             $order['pay_amount'] = round($orderDetails['total'] / $curr->value, 2) + $request['delivery_cost'] + $orderDetails['packing_cost'];
-            $order['method'] = 'Cash on Delivery';
+            $order['method'] = 'CRM - Card / MoMo';
             $order['delivery'] = $orderDetails['delivery'];
             $order['pickup_location'] = @$orderDetails['pickup_location'];
             $order['customer_email'] = $orderDetails['email'];
@@ -401,8 +400,8 @@ class CheckoutController extends Controller
             $order['customer_address'] = $orderDetails['address'];
             $order['customer_country'] = $orderDetails['customer_country'];
             $order['status'] = 'Completed';
-            $order['payment_status'] = 'Completed';
-            $order['txnid'] = 'trans_id';
+            $order['payment_status'] = $rs["message"];
+            $order['txnid'] = $rs["trans_id"];
             $order['customer_city'] = $orderDetails['city'];
             $order['customer_zip'] = $orderDetails['zip'];
             $order['delivery_email'] = $orderDetails['delivery_email'];

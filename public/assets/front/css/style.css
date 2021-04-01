@@ -5323,9 +5323,9 @@ Faq Page Start
 .about {
   padding: 60px 0px 60px; }
   .about .about-info .title {
-    font-size: 36px;
+    font-size: 30px;
     font-weight: 600;
-    margin-bottom: 30px; }
+    margin-top: -3%; }
   .about .about-info p {
     font-size: 14px; }
   .about .about-info .readmore-link {
