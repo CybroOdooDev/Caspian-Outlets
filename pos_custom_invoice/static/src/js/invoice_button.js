@@ -144,26 +144,28 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                     let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
 
                     window.location.href = url;
-                    self.env.pos.rpc({
-                        model: 'account.move',
-                        method: 'unlink',
-                        args: [invoice_id],
-                    }).then(function(){
-                        console.log("Success");
-                    });
-                    self.env.pos.rpc({
-                        model: 'pos.order',
-                        method: 'search',
-                        args: [[['name', '=', '/']]],
-                    }).then(function(result){
+                    setTimeout( function () {
                         self.env.pos.rpc({
-                            model: 'pos.order',
+                            model: 'account.move',
                             method: 'unlink',
-                            args: [result],
+                            args: [invoice_id],
                         }).then(function(){
                             console.log("Success");
                         });
-                    });
+                        self.env.pos.rpc({
+                            model: 'pos.order',
+                            method: 'search',
+                            args: [[['name', '=', '/']]],
+                        }).then(function(result){
+                            self.env.pos.rpc({
+                                model: 'pos.order',
+                                method: 'unlink',
+                                args: [result],
+                            }).then(function(){
+                                console.log("Success");
+                            });
+                        });
+                    }, 3000);
                 });
            self.env.pos.rpc({
                 model: 'account.move',
