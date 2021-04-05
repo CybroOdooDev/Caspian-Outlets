@@ -36,13 +36,13 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
             }
        }
 
+//       This function gets executed when the control button is clicked
        async IsCustomInvoice(){
             console.log("Current Order :", this.currentOrder);
             let order = this.currentOrder;
             let client = this.currentOrder.get_client();
             let currency_id = this.env.pos.company_currency.id;
             var self = this;
-            var order_id = self.env.pos.db.add_order(order.export_as_JSON());
 
             if (this.currentOrder.get_orderlines().length === 0) {
                 this.showPopup('ErrorPopup', {
@@ -66,20 +66,6 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                 }
                 return false;
             }
-
-            self.env.pos.rpc({
-                model: 'pos.order',
-                method: 'search',
-                args: [[['name', '=', '/']]],
-            }).then(function(result){
-                self.env.pos.rpc({
-                    model: 'pos.order',
-                    method: 'unlink',
-                    args: [result],
-                }).then(function(){
-                    console.log("Success");
-                });
-            });
 
             var size = Object.keys(this.currentOrder.orderlines._byId).length;
             let invoice_lines = [];
@@ -112,67 +98,44 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
             self.env.pos.rpc({
                 model: 'account.move',
                 method: 'search',
-                args: [[['payment_reference', '=', order_id]]]
+                args: [[['draft_invoice', '=', 1]]]
             }).then(function(result){
                 invoice_id = result;
                 self.env.pos.rpc({
                     model: 'account.move',
-                    method: 'unlink',
+                    method: 'unlink',   // Removing the previously generated invoice drafts
                     args: [invoice_id],
                 });
             });
 
             self.env.pos.rpc({
-                    model: 'account.move',
-                    method: 'create',
-                    args: [{
-                        'partner_id': client.id,
-                        'currency_id': currency_id,
-
-//                            'name': "INV/"+order_id,
-                        'state': 'draft',
-                        'move_type': 'out_invoice',
-                        'invoice_date': today,
-
-                        'invoice_line_ids': invoice_lines,
-                        'payment_reference': order_id
-                    }]
-                })
-                .then(function(result) {
-                    invoice_id = result;
-                    let base_url = window.location.origin;
-                    let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
-
-                    window.location.href = url;
-                    setTimeout( function () {
-                        self.env.pos.rpc({
-                            model: 'account.move',
-                            method: 'unlink',
-                            args: [invoice_id],
-                        }).then(function(){
-                            console.log("Success");
-                        });
-                        self.env.pos.rpc({
-                            model: 'pos.order',
-                            method: 'search',
-                            args: [[['name', '=', '/']]],
-                        }).then(function(result){
-                            self.env.pos.rpc({
-                                model: 'pos.order',
-                                method: 'unlink',
-                                args: [result],
-                            }).then(function(){
-                                console.log("Success");
-                            });
-                        });
-                    }, 3000);
-                });
-           self.env.pos.rpc({
                 model: 'account.move',
-                method: 'unlink',
-                args: [invoice_id],
-            }).then(function(){
-                console.log("Success");
+                method: 'create',
+                args: [{
+                    'partner_id': client.id,
+                    'currency_id': currency_id,
+                    'state': 'draft',
+                    'move_type': 'out_invoice',
+                    'invoice_date': today,
+                    'invoice_line_ids': invoice_lines,
+                    'draft_invoice': 1,
+                }]
+            })
+            .then(function(result) {
+                invoice_id = result;
+                let base_url = window.location.origin;
+                let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
+
+                window.location.href = url; // Downloads the Invoice pdf
+                setTimeout( function () {
+                    self.env.pos.rpc({
+                        model: 'account.move',
+                        method: 'unlink',
+                        args: [invoice_id],
+                    }).then(function(){
+                        console.log("Success");
+                    });
+                }, 3000);
             });
        }
    }

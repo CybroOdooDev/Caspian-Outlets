@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api, _
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 
@@ -15,3 +15,8 @@ class PoSCustomInvoice(models.AbstractModel):
         print("Report :", report)
         return self.env.ref('account.account_invoices').report_action(self)
 
+
+class DraftInvoice(models.Model):
+    _inherit = 'account.move'
+
+    draft_invoice = fields.Boolean("Draft Invoice")
