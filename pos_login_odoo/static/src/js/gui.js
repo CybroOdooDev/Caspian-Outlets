@@ -45,7 +45,6 @@ odoo.define('pos_login_odoo.gui', function (require) {
                                 
                             }
                     });
-                
                 }
         }
     Registries.Component.extend(Chrome, gui);
