@@ -55,14 +55,14 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
             let currency_id = this.env.pos.company_currency.id;
 
             var self = this;
-            self.env.pos.rpc({
-                model: 'account.account',
-                method: 'search',
-                args: [[]]
-            }).then(function(result){
-                console.log("account",result);
-                self.account_id = result[0];
-            });
+//            self.env.pos.rpc({
+//                model: 'account.account',
+//                method: 'search',
+//                args: [[]]
+//            }).then(function(result){
+//                console.log("account",result);
+//                self.account_id = result[0];
+//            });
 
             if (this.currentOrder.get_orderlines().length === 0) {
                 this.showPopup('ErrorPopup', {
@@ -101,8 +101,6 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                             'quantity': value.quantity,
                             'discount': value.discount,
                             'tax_ids': value.product.taxes_id,
-                            'account_id': 2,
-
                         })
                     }
                     console.log("Line ", line)
@@ -113,54 +111,55 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                 i = i + 1;
             }
 
-           var today = new Date();
-           var dd = String(today.getDate()).padStart(2, '0');
-           var mm = String(today.getMonth() + 1).padStart(2, '0');
-           var yyyy = today.getFullYear();
-           var invoice_id;
-           today = yyyy + '-' + mm + '-' + dd;
-           self.env.pos.rpc({
-               model: 'account.move',
-               method: 'search',
-               args: [[['draft_invoice', '=', 1]]]
-           }).then(function(result){
-               invoice_id = result;
-               self.env.pos.rpc({
-                   model: 'account.move',
-                   method: 'unlink',   // Removing the previously generated invoice drafts
-                   args: [invoice_id],
-               });
-           });
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            var invoice_id;
+            today = yyyy + '-' + mm + '-' + dd;
+            self.env.pos.rpc({
+                model: 'account.move',
+                method: 'search',
+                args: [[['draft_invoice', '=', 1]]]
+            }).then(function(result){
+                invoice_id = result;
+                self.env.pos.rpc({
+                    model: 'account.move',
+                    method: 'unlink',   // Removing the previously generated invoice drafts
+                    args: [invoice_id],
+                });
+            });
 
-           self.env.pos.rpc({
-               model: 'account.move',
-               method: 'create',
-               args: [{
-                   'partner_id': client.id,
-                   'currency_id': currency_id,
-                   'state': 'draft',
-                   'move_type': 'out_invoice',
-                   'invoice_date': today,
-                   'invoice_line_ids': invoice_lines,
-                   'draft_invoice': 1,
-               }]
-           })
-           .then(function(result) {
-               invoice_id = result;
-               let base_url = window.location.origin;
-               let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
+            self.env.pos.rpc({
+                model: 'account.move',
+                method: 'create',
+                args: [{
+                    'partner_id': client.id,
+                    'currency_id': currency_id,
+                    'state': 'draft',
+                    'move_type': 'out_invoice',
+                    'invoice_date': today,
+                    'invoice_line_ids': invoice_lines,
+                    'draft_invoice': 1,
+                }]
+            })
+            .then(function(result) {
+                invoice_id = result;
+                let base_url = window.location.origin;
+                let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
 
-               window.location.href = url; // Downloads the Invoice pdf
-               setTimeout( function () {
-                   self.env.pos.rpc({
-                       model: 'account.move',
-                       method: 'unlink',
-                       args: [invoice_id],
-                   }).then(function(){
-                       console.log("Success", self);
-                   });
-               }, 3000); // Waiting for 3 seconds before deleting the generated draft invoice
-           });
+                window.location.href = url; // Downloads the Invoice pdf
+                setTimeout( function () {
+                    self.env.pos.rpc({
+                        model: 'account.move',
+                        method: 'unlink',
+                        args: [invoice_id],
+                    }).then(function(){
+                        console.log("Success", self);
+                    });
+                }, 3000); // Waiting for 3 seconds before deleting the generated draft invoice
+            });
+
        }
    }
    CustomInvoiceButton.template = 'CustomInvoiceButton';
