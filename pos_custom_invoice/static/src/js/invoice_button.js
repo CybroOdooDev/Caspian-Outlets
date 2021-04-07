@@ -4,6 +4,7 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
    const PosComponent = require('point_of_sale.PosComponent');
    const ProductScreen = require('point_of_sale.ProductScreen');
    const Registries = require('point_of_sale.Registries');
+   var account_id;
 
    class CustomInvoiceButton extends PosComponent {
        constructor() {
@@ -33,13 +34,35 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
             }
        }
 
+       get accountid() {
+            var self = this;
+            this.env.pos.rpc({
+                model: 'account.account',
+                method: 'search',
+                args: [[]]
+            }).then(function(result){
+                console.log("account",result[0]);
+                self.account_id = result[0];
+            });
+            return account_id;
+       }
+
 //       This function gets executed when the control button is clicked
        async IsCustomInvoice(){
             console.log("Current Order :", this.currentOrder);
             let order = this.currentOrder;
             let client = this.currentOrder.get_client();
             let currency_id = this.env.pos.company_currency.id;
+
             var self = this;
+            self.env.pos.rpc({
+                model: 'account.account',
+                method: 'search',
+                args: [[]]
+            }).then(function(result){
+                console.log("account",result[0]);
+                self.account_id = result[0];
+            });
 
             if (this.currentOrder.get_orderlines().length === 0) {
                 this.showPopup('ErrorPopup', {
@@ -67,15 +90,6 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
             var size = Object.keys(this.currentOrder.orderlines._byId).length;
             let invoice_lines = [];
             var i = 0;
-            var account_id;
-
-            self.env.pos.rpc({
-                model: 'account.account',
-                method: 'search',
-                args: [[['company_id', '=', self.env.session.company_id]]]
-            }).then(function(result){
-                account_id = result[0];
-            });
 
             for (let [key, value] of Object.entries(this.currentOrder.orderlines._byId)){
                 if(i < size/2){
@@ -87,16 +101,17 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                             'quantity': value.quantity,
                             'discount': value.discount,
                             'tax_ids': value.product.taxes_id,
-                            'account_id': account_id,
+                            'account_id': self.account_id,
                         })
                     }
-
+                    console.log("Line ", line)
                     if(line){
                         invoice_lines.push(line);
                     }
                 }
                 i = i + 1;
             }
+
             var today = new Date();
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -116,35 +131,35 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                 });
             });
 
-            self.env.pos.rpc({
-                model: 'account.move',
-                method: 'create',
-                args: [{
-                    'partner_id': client.id,
-                    'currency_id': currency_id,
-                    'state': 'draft',
-                    'move_type': 'out_invoice',
-                    'invoice_date': today,
-                    'invoice_line_ids': invoice_lines,
-                    'draft_invoice': 1,
-                }]
-            })
-            .then(function(result) {
-                invoice_id = result;
-                let base_url = window.location.origin;
-                let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
-
-                window.location.href = url; // Downloads the Invoice pdf
-                setTimeout( function () {
-                    self.env.pos.rpc({
-                        model: 'account.move',
-                        method: 'unlink',
-                        args: [invoice_id],
-                    }).then(function(){
-                        console.log("Success", self);
-                    });
-                }, 3000); // Waiting for 3 seconds before deleting the generated draft invoice
-            });
+//            self.env.pos.rpc({
+//                model: 'account.move',
+//                method: 'create',
+//                args: [{
+//                    'partner_id': client.id,
+//                    'currency_id': currency_id,
+//                    'state': 'draft',
+//                    'move_type': 'out_invoice',
+//                    'invoice_date': today,
+//                    'invoice_line_ids': invoice_lines,
+//                    'draft_invoice': 1,
+//                }]
+//            })
+//            .then(function(result) {
+//                invoice_id = result;
+//                let base_url = window.location.origin;
+//                let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
+//
+//                window.location.href = url; // Downloads the Invoice pdf
+//                setTimeout( function () {
+//                    self.env.pos.rpc({
+//                        model: 'account.move',
+//                        method: 'unlink',
+//                        args: [invoice_id],
+//                    }).then(function(){
+//                        console.log("Success", self);
+//                    });
+//                }, 3000); // Waiting for 3 seconds before deleting the generated draft invoice
+//            });
        }
    }
    CustomInvoiceButton.template = 'CustomInvoiceButton';
