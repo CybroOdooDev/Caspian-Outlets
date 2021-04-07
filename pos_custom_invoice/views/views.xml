@@ -3,10 +3,34 @@
     <data>
         <template id="assets" inherit_id="point_of_sale.assets">
           <xpath expr="." position="inside">
-<!--              <script type="text/javascript" src="pos_custom_invoice/static/src/js/main.js"/>-->
               <script type="text/javascript" src="pos_custom_invoice/static/src/js/invoice_button.js"/>
-<!--              <link rel="stylesheet" href="/pos_delivery_charges/static/src/css/pos.css" />-->
           </xpath>
         </template>
     </data>
+
+    <record id="pos_custom_invoice" model="ir.ui.view">
+        <field name="name">pos.custom_invoice</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//h2[@name='order']" position="after">
+                <span> </span>
+                <div class="row mt16 o_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box"
+                         id="pos_bill_desc">
+                        <div class="o_setting_left_pane">
+                            <field name="pos_custom_invoice"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_custom_invoice"/>
+                            <span class="fa fa-file-text-o"/>
+                            <div class="text-muted">
+                                Print/View Invoice Drafts before payment
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
 </odoo>

@@ -14,13 +14,9 @@
     'depends': ['point_of_sale'],
     'data': [
         'views/views.xml',
-        'views/report.xml',
     ],
     'qweb': [
-        # 'static/src/xml/invoice.xml',
         'static/src/xml/invoice_button.xml'
-    ],
-    'images': [
     ],
     'installable': True,
     'auto_install': False,
