@@ -87,7 +87,7 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                             'quantity': value.quantity,
                             'discount': value.discount,
                             'tax_ids': value.product.taxes_id,
-                            'account_id': account_id,
+                            'account_id': 1,
                         })
                     }
 
