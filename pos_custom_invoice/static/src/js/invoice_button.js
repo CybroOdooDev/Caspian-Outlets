@@ -101,7 +101,6 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                             'quantity': value.quantity,
                             'discount': value.discount,
                             'tax_ids': value.product.taxes_id,
-//                            'account_id': self.account_id,
                         })
                     }
                     console.log("Line ", line)
@@ -160,6 +159,7 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                     });
                 }, 3000); // Waiting for 3 seconds before deleting the generated draft invoice
             });
+
        }
    }
    CustomInvoiceButton.template = 'CustomInvoiceButton';
