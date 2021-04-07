@@ -1,16 +1,14 @@
 odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
 'use strict';
-   const { Gui } = require('point_of_sale.Gui');
+
    const PosComponent = require('point_of_sale.PosComponent');
-   const { posbus } = require('point_of_sale.utils');
    const ProductScreen = require('point_of_sale.ProductScreen');
-   const { useListener } = require('web.custom_hooks');
    const Registries = require('point_of_sale.Registries');
-   const PaymentScreen = require('point_of_sale.PaymentScreen');
+   var account_id;
+
    class CustomInvoiceButton extends PosComponent {
        constructor() {
            super(...arguments);
-//           useListener('click', this.onClick);
        }
        get currentOrder() {
             return this.env.pos.get_order();
@@ -36,13 +34,35 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
             }
        }
 
+       get accountid() {
+            var self = this;
+            this.env.pos.rpc({
+                model: 'account.account',
+                method: 'search',
+                args: [[]]
+            }).then(function(result){
+                console.log("account",result[0]);
+                self.account_id = result[0];
+            });
+            return account_id;
+       }
+
 //       This function gets executed when the control button is clicked
        async IsCustomInvoice(){
             console.log("Current Order :", this.currentOrder);
             let order = this.currentOrder;
             let client = this.currentOrder.get_client();
             let currency_id = this.env.pos.company_currency.id;
+
             var self = this;
+//            self.env.pos.rpc({
+//                model: 'account.account',
+//                method: 'search',
+//                args: [[]]
+//            }).then(function(result){
+//                console.log("account",result);
+//                self.account_id = result[0];
+//            });
 
             if (this.currentOrder.get_orderlines().length === 0) {
                 this.showPopup('ErrorPopup', {
@@ -70,6 +90,7 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
             var size = Object.keys(this.currentOrder.orderlines._byId).length;
             let invoice_lines = [];
             var i = 0;
+
             for (let [key, value] of Object.entries(this.currentOrder.orderlines._byId)){
                 if(i < size/2){
                     if(value.product.id){
@@ -79,16 +100,17 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                             'price_unit': value.price,
                             'quantity': value.quantity,
                             'discount': value.discount,
-                            'tax_ids': value.product.taxes_id
+                            'tax_ids': value.product.taxes_id,
                         })
                     }
-
+                    console.log("Line ", line)
                     if(line){
                         invoice_lines.push(line);
                     }
                 }
                 i = i + 1;
             }
+
             var today = new Date();
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -133,17 +155,18 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                         method: 'unlink',
                         args: [invoice_id],
                     }).then(function(){
-                        console.log("Success");
+                        console.log("Success", self);
                     });
-                }, 3000);
+                }, 3000); // Waiting for 3 seconds before deleting the generated draft invoice
             });
+
        }
    }
    CustomInvoiceButton.template = 'CustomInvoiceButton';
    ProductScreen.addControlButton({
        component: CustomInvoiceButton,
        condition: function() {
-           return this.env.pos;
+           return this.env.pos.config.pos_custom_invoice;
        },
    });
    Registries.Component.add(CustomInvoiceButton);
