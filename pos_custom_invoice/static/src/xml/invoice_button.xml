@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
     <t t-name="CustomInvoiceButton" owl="1">
        <div class="control-button" t-on-click="IsCustomInvoice">
-           <i class="fa fa-pencil-square-o"></i>
+           <i class="fa fa-file-text-o"></i>
            <span> </span>
            <span>Invoice Preview</span>
        </div>
