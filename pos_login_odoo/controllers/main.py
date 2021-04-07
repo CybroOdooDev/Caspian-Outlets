@@ -21,11 +21,11 @@ class PosWebsiteLogin(Website):
         time_obj = datetime.datetime.strptime(time.asctime(time.localtime(time.time())), "%a %b %d %H:%M:%S %Y")
         current_time = float(time_obj.time().strftime("%H.%M"))
 
-        # print("Time : ", login_start)
-        # print("Time : ", login_end)
-        # print("Time : ", current_time)
-        # print("Test 1 : ", login_start >= current_time)
-        # print("Test 2 : ", login_end <= current_time)
+        print("Time : ", login_start)
+        print("Time : ", login_end)
+        print("Time : ", current_time)
+        print("Test 1 : ", login_start >= current_time)
+        print("Test 2 : ", login_end <= current_time)
         values = request.params.copy()
         session_id = request.env['pos.session'].sudo().search(
             [('state', '=', 'opened'), ('user_id', '=', request.uid)])
@@ -68,10 +68,10 @@ class PosWebsiteLogin(Website):
                  ('config_id', '=', config_id.id)])
             if current_session_id:
                 request.session.logout(keep_db=True)
-                values['error'] = "You can't access PoS right now"
+                values['error'] = "You can't access PoS right now ( " + str(login_start) + " am to " + str(24.0 - login_end) + " pm)"
                 return request.render('web.login', values)
         return response
-    
+
     #Direct Login page
     @http.route('/', type='http', auth='none')
     def direct_login(self):
