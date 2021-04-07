@@ -131,35 +131,35 @@ odoo.define('pos_custom_invoice.CustomInvoice', function(require) {
                 });
             });
 
-//            self.env.pos.rpc({
-//                model: 'account.move',
-//                method: 'create',
-//                args: [{
-//                    'partner_id': client.id,
-//                    'currency_id': currency_id,
-//                    'state': 'draft',
-//                    'move_type': 'out_invoice',
-//                    'invoice_date': today,
-//                    'invoice_line_ids': invoice_lines,
-//                    'draft_invoice': 1,
-//                }]
-//            })
-//            .then(function(result) {
-//                invoice_id = result;
-//                let base_url = window.location.origin;
-//                let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
-//
-//                window.location.href = url; // Downloads the Invoice pdf
-//                setTimeout( function () {
-//                    self.env.pos.rpc({
-//                        model: 'account.move',
-//                        method: 'unlink',
-//                        args: [invoice_id],
-//                    }).then(function(){
-//                        console.log("Success", self);
-//                    });
-//                }, 3000); // Waiting for 3 seconds before deleting the generated draft invoice
-//            });
+            self.env.pos.rpc({
+                model: 'account.move',
+                method: 'create',
+                args: [{
+                    'partner_id': client.id,
+                    'currency_id': currency_id,
+                    'state': 'draft',
+                    'move_type': 'out_invoice',
+                    'invoice_date': today,
+                    'invoice_line_ids': invoice_lines,
+                    'draft_invoice': 1,
+                }]
+            })
+            .then(function(result) {
+                invoice_id = result;
+                let base_url = window.location.origin;
+                let url = base_url+"/my/invoices/"+result+"?access_token=None&report_type=pdf&download=true";
+
+                window.location.href = url; // Downloads the Invoice pdf
+                setTimeout( function () {
+                    self.env.pos.rpc({
+                        model: 'account.move',
+                        method: 'unlink',
+                        args: [invoice_id],
+                    }).then(function(){
+                        console.log("Success", self);
+                    });
+                }, 3000); // Waiting for 3 seconds before deleting the generated draft invoice
+            });
        }
    }
    CustomInvoiceButton.template = 'CustomInvoiceButton';
