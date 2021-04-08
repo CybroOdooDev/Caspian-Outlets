@@ -52,10 +52,10 @@
 
                                                         @if($prod->product->subcategory_id != null)
 
-                                                        {{$prod->product->subcategory->name}} <br>
+                                                        {{$prod->product->subcategory_name}} <br>
 
                                                         @if($prod->product->childcategory_id != null)
-                                                        {{$prod->product->childcategory->name}}
+                                                        {{$prod->product->childcategory_name}}
                                                         @endif
 
                                                         @endif
