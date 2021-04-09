@@ -31,7 +31,7 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="about-info">
-          <h4 class="title">
+          <h4 class="title" style="font-size: 20px;">
             {{ $page->title }}
           </h4>
           <hr style="margin-bottom: -2% !important;">
