@@ -14,12 +14,35 @@ odoo.define('pos_login_odoo.gui', function (require) {
     const gui = (Chrome) =>
         class extends Chrome {
             constructor() {
-            super(...arguments);            
+            super(...arguments);
+//            console.log(this);
+//            var self = this;
+//            this.rpc({
+//                model: 'hr.employee',
+//                method: 'search',
+//                args: [[['user_id', '=', this.env.session.uid]]]
+//            }).then(function(result){
+//                self.rpc({
+//                model: 'hr.attendance',
+//                method: 'search',
+//                args: [[['employee_id', '=', result]]]
+//                }).then(function(result){
+//                    console.log("Result ", result[0]);
+//                    self.rpc({
+//                        model: 'hr.attendance',
+//                        method: 'browse',
+//                        args: [result]
+//                    }).then(function(result){
+//                        console.log("Result ", result);
+//                    });
+//                });
+//            });
             }
 
             async _closePos() {
                 var self = this;
-                
+//                self.employee_state = 'checked_out';
+
                 var session_data = session.uid    
                     this.rpc({
                             model: 'res.users',

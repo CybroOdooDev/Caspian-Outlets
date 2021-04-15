@@ -36,6 +36,7 @@ odoo pos screen directly point of sales cashier login point of sales direct logi
     "currency": "EUR",
     "data": ['views/custom_pos_view.xml', 'views/views.xml'],
     'qweb': [],
+    'depends': ['hr_attendance'],
     "auto_install": False,
     "installable": True,
     'external_dependencies': {'python': ['easygui']},
