@@ -18,6 +18,7 @@
     ],
     'qweb': [
         'static/src/xml/product_stock.xml',
+        'static/src/xml/customer_receipt.js',
     ],
     'installable': True,
     'auto_install': False,
