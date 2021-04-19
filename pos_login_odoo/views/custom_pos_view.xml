@@ -4,7 +4,7 @@
 
     	<template id="template_login" inherit_id="point_of_sale.assets">
             <xpath expr="." position="inside">
-                <script type="text/javascript" src="/pos_login_odoo/static/src/js/gui.js"></script>
+<!--                <script type="text/javascript" src="/pos_login_odoo/static/src/js/gui.js"></script>-->
             </xpath>
         </template>
     
