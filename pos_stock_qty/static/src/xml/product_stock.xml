@@ -1,0 +1,24 @@
+<template id="template" inherit_id="point_of_sale.template" xml:space="preserve">
+    <t t-inherit="point_of_sale.ProductItem" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('product-img')]" position="after">
+            <style type="text/css">
+                .stock {
+                    position: absolute;
+                    top: 2px;
+                    left: 2px;
+                    vertical-align: bottom;
+                    color: white;
+                    line-height: 13px;
+                    background: #3395FF;
+                    padding: 2px 5px;
+                    border-radius: 2px;
+                }
+            </style>
+            <t t-if="props.product.qty_available">
+                <span class="stock" t-attf-id="article_product_{{props.product.id}}">
+                    <t t-esc="props.product.qty_available"/> units
+                </span>
+            </t>
+        </xpath>
+        </t>
+</template>
