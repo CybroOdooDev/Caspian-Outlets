@@ -12,13 +12,14 @@
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': 'https://www.cybrosys.com',
-    'depends': ['point_of_sale'],
+    'depends': ['point_of_sale', 'hr_attendance'],
     'data': [
         'views/assets.xml'
     ],
     'qweb': [
         'static/src/xml/product_stock.xml',
-        'static/src/xml/customer_receipt.js',
+        'static/src/xml/customer_receipt.xml',
+        'static/src/xml/kiosk.xml',
     ],
     'installable': True,
     'auto_install': False,
