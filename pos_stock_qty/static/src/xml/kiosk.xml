@@ -1,0 +1,17 @@
+
+<template id="kiosk_back" inherit_id="hr_attendance.attendance">
+    <t t-inherit="hr_attendance.HrAttendanceKioskMode" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_hr_attendance_kiosk_welcome_row')]" position="after">
+            <center>
+                <div class="col-sm-5 mt8">
+                    <a href="/web">
+                        <button class="btn mb16">
+                            <div class="mb16 mt16">Go Home</div>
+                        </button>
+                    </a>
+                </div>
+            </center>
+        </xpath>
+    </t>
+</template>
+

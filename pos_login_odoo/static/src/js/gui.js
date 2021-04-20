@@ -42,7 +42,6 @@ odoo.define('pos_login_odoo.gui', function (require) {
             async _closePos() {
                 var self = this;
 //                self.employee_state = 'checked_out';
-
                 var session_data = session.uid    
                     this.rpc({
                             model: 'res.users',
