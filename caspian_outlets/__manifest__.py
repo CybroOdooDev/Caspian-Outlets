@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'PoS Stock Quantity',
+    'name': 'Caspian Outlets',
     'version': '14.0.1.0.0',
-    'category': 'Point of Sale',
     'summary': """
-        Displays the on-hand quantity of products in the POS Interface
+        Restricts Documents on Expense and POS appropriately
     """,
-    'description': """Displays the on-hand quantity""",
+    'description': """Expense report can only approved by certain person above a threshold amount
+                      Only displays allocated POS Outlets  """,
     'author': 'Odoo SA,Cybrosys Techno Solutions',
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': 'https://www.cybrosys.com',
-    'depends': ['point_of_sale', 'hr_attendance'],
+    'depends': ['hr_expense', 'point_of_sale'],
     'data': [
-        'views/assets.xml'
+        'views/hr_expense.xml',
+        'security/ir.model.access.csv',
+        'data/data.xml'
     ],
     'qweb': [
-        'static/src/xml/product_stock.xml',
-        'static/src/xml/customer_receipt.xml',
-        'static/src/xml/kiosk.xml',
     ],
     'installable': True,
     'auto_install': False,
