@@ -15,11 +15,11 @@ class ExpenseSheet(models.Model):
     _inherit = 'hr.expense.sheet'
 
     def _get_add_approve(self):
-        self.add_approve = False
+        self.add_approve = True
         limit = self.env['hr.expense.limit'].search([], limit=1)
         current_uid = self.env.context.get('uid', False)
         if self.total_amount >= limit.threshold_amount:
-            if current_uid == limit.auth_user_id.id:
-                self.add_approve = True
+            if current_uid != limit.auth_user_id.id:
+                self.add_approve = False
 
     add_approve = fields.Boolean(compute=_get_add_approve)
