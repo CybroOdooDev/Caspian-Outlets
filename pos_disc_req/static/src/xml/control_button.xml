@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="RequestButton" owl="1">
+       <div class="control-button" t-on-click="RequestDiscount">
+           <i class="fa fa-file-text-o"></i>
+           <span> </span>
+           <span>Request Discount</span>
+       </div>
+   </t>
+</templates>

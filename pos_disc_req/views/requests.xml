@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+
+        <record id="pos_requests" model="ir.ui.view">
+            <field name="name">Pos Requests</field>
+            <field name="model">pos.request</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="user_id" required="True" string="Cashier"/>
+                    <field name="disc_status" string="Discount status"/>
+                    <field name="state"/>
+                    <button string="Approve" icon="fa-thumbs-up" name="action_allow"
+                            type="object" states="to_approve"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="pos_requests_action" model="ir.actions.act_window">
+            <field name="name">Discount requests</field>
+            <field name="res_model">pos.request</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('state', '=', 'to_approve')]</field>
+        </record>
+
+        <menuitem id="pos_request_menu" action="pos_requests_action"/>
+    </data>
+</odoo>
