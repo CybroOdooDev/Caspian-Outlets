@@ -8,7 +8,7 @@ class PointOfSale(models.Model):
 
     def action_pos_session_closing_control(self):
         res = super(PointOfSale, self).action_pos_session_closing_control()
-
+        print("Test")
         message = self.env['mail.message'].create({
             'model': 'pos.session',
             'res_id': int(self.id),
@@ -17,9 +17,7 @@ class PointOfSale(models.Model):
             'body': self.config_id.name+' session closed',
             'email_from': self.env.user.email
         })
-        user_types_category = self.env.ref('pos_disable_all.group_admin',
-                                           raise_if_not_found=False)
-        group = self.env['res.groups'].search([('category_id', '=', user_types_category.id)])
+        group = self.env.ref('pos_disable_all.group_admin')
         print("group users ", group.users)
         res_partner_ids = []
         for partner in group.users:
@@ -40,15 +38,13 @@ class ExpenseReport(models.Model):
         res = super(ExpenseReport, self).action_submit_expenses()
         message = self.env['mail.message'].create({
             'model': 'hr.expense',
+            'res_id': int(self.id),
             'subject': self.name,
             'message_type': 'notification',
             'body': self.env.user.name + " Submitted Expense report",
             'email_from': self.env.user.email
         })
-        user_types_category = self.env.ref('pos_disable_all.group_admin',
-                                           raise_if_not_found=False)
-        group = self.env['res.groups'].search(
-            [('category_id', '=', user_types_category.id)])
+        group = self.env.ref('pos_disable_all.group_admin')
         print("group users ", group.users)
         res_partner_ids = []
         for partner in group.users:
