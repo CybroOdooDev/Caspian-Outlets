@@ -8,9 +8,10 @@ class PointOfSale(models.Model):
 
     def action_pos_session_closing_control(self):
         res = super(PointOfSale, self).action_pos_session_closing_control()
+
         message = self.env['mail.message'].create({
             'model': 'pos.session',
-            # 'res_id': str(self.id),
+            'res_id': int(self.id),
             'subject': self.config_id.name+' session closed',
             'message_type':  'notification',
             'body': self.config_id.name+' session closed',
