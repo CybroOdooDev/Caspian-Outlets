@@ -15,7 +15,7 @@
     'depends': ['hr_expense', 'point_of_sale', 'pos_disable_all'],
     'data': [
         'views/hr_expense.xml',
-        # 'views/notifications.xml',
+        'views/assets.xml',
         'security/ir.model.access.csv',
         'data/data.xml'
     ],

@@ -14,7 +14,8 @@ class PointOfSale(models.Model):
             'res_id': int(self.id),
             'subject': self.config_id.name+' session closed',
             'message_type':  'notification',
-            'body': self.config_id.name+' session closed',
+            'body': "Total orders: %s<br/>Total Payments Amount: %s"
+            % (self.order_count, self.total_payments_amount),
             'email_from': self.env.user.email
         })
         group = self.env.ref('pos_disable_all.group_admin')
@@ -41,7 +42,8 @@ class ExpenseReport(models.Model):
             'res_id': int(self.id),
             'subject': self.name,
             'message_type': 'notification',
-            'body': self.env.user.name + " Submitted Expense report",
+            'body': "%s submitted an expense report having total amount %s"
+                    % (self.employee_id.name, self.total_amount),
             'email_from': self.env.user.email
         })
         group = self.env.ref('pos_disable_all.group_admin')
