@@ -1,0 +1,9 @@
+<odoo>
+    <data>
+
+            <record model="ir.ui.menu" id="pos_disc_req.pos_request_menu">
+                 <field name="groups_id" eval="[(6,0,[ref('pos_disable_all.group_supervisor')])]"/>
+            </record>
+
+    </data>
+</odoo>
