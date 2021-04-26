@@ -1,0 +1,7 @@
+<odoo>
+    <template id="pos_product_check" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/caspian_outlets/static/src/js/payment_screen.js"/>
+        </xpath>
+    </template>
+</odoo>
