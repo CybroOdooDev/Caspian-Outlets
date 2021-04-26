@@ -17,7 +17,8 @@
         'views/hr_expense.xml',
         'views/assets.xml',
         'security/ir.model.access.csv',
-        'data/data.xml'
+        'data/data.xml',
+        'data/mail_template.xml',
     ],
     'qweb': [
     ],
