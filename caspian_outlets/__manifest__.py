@@ -12,7 +12,7 @@
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': 'https://www.cybrosys.com',
-    'depends': ['hr_expense', 'point_of_sale', 'pos_disable_all'],
+    'depends': ['hr_expense', 'point_of_sale', 'pos_disable_all', 'purchase'],
     'data': [
         'views/hr_expense.xml',
         'views/assets.xml',
