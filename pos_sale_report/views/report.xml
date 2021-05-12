@@ -88,7 +88,7 @@
 
             <strong>Total: <t t-esc='total_paid' t-options="{'widget': 'float', 'precision': currency_precision}"/></strong>
             <br></br>
-            <strong><span>Margin Total:</span><t t-esc="sum(line['margin'] for line in products)"/></strong>
+            <strong><span>Margin Total:</span><t t-esc="sum(line['margin'] for line in products)" t-options="{'widget': 'float', 'precision': currency_precision}"/></strong>
 
             <br/>
 
