@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_qty_update_permission" model="ir.ui.view">
+            <field name="name">Product Template : Update Permission</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="priority">25</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_update_quantity_on_hand']" position="replace">
+                    <button type="object" string="Update Quantity"
+                            name="action_update_quantity_on_hand"
+                            groups="qty_update_permission.group_stock_stock_updater"
+                            attrs="{'invisible': [('type', '!=', 'product')]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

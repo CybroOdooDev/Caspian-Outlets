@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stock_quant_stock_updater,stock.quant stock updater,stock.model_stock_quant,qty_update_permission.group_stock_stock_updater,1,1,1,1
