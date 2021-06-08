@@ -16,11 +16,8 @@
     'website': 'https://www.cybrosys.com',
     'depends': ['stock'],
     'data': [
-<<<<<<< HEAD
         'security/stock_groups.xml',
-=======
         'security/stock_security.xml',
->>>>>>> 15e36024e990dee0e1ec0ba7ed1580c13a8dcae4
         'security/ir.model.access.csv',
         'views/product_views.xml'
     ],
