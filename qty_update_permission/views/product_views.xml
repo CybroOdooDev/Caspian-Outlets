@@ -13,6 +13,12 @@
                             groups="qty_update_permission.group_stock_stock_updater"
                             attrs="{'invisible': [('type', '!=', 'product')]}"/>
                 </xpath>
+                <xpath expr="//header/button[3]" position="replace">
+                    //this is to hide replenish button since client demanded that he is not having any use of this button
+                    <button string="Replenish" type="action"
+                            name="%(stock.action_product_replenish)d"
+                            invisible="1"/>
+                </xpath>
             </field>
         </record>
     </data>
