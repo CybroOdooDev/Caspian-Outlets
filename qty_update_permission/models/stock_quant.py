@@ -16,7 +16,15 @@ class StockQuant(models.Model):
 
     @api.onchange('inventory_quantity')
     def _onchange_inventory_quantity(self):
-        print('inventory_quantity changed to : ', self.inventory_quantity)
-        print('write_uid : ', self.env.user)
         if not self.env.user.allow_qty_update:
             raise UserError(_('You must have Quantity Update permission to write/modify the quantity available of a stock.'))
+
+
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    allow_qty_update = fields.Boolean(string='Allow Quantity Update',
+                                      compute='_compute_allow_qty_update')
+
+    def _compute_allow_qty_update(self):
+        self.allow_qty_update = self.env.user.allow_qty_update

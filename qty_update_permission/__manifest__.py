@@ -17,9 +17,9 @@
     'website': 'https://www.cybrosys.com',
     'depends': ['stock'],
     'data': [
-        # 'security/stock_groups.xml',
         'security/ir.model.access.csv',
-        'views/res_users.xml'
+        'views/res_users.xml',
+        'views/product_views.xml'
     ],
     'installable': True,
     'auto_install': False,
