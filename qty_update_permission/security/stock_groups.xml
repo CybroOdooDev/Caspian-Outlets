@@ -1,8 +1,0 @@
-<odoo>
-    <data>
-        <record id="group_stock_stock_updater" model="res.groups">
-            <field name="name">Stock Updater</field>
-            <field name="category_id" ref="base.module_category_inventory_inventory"/>
-        </record>
-    </data>
-</odoo>
