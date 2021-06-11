@@ -55,7 +55,7 @@ class StockMoveLine(models.Model):
                         'from': self.env.user.email,
                         'moves': moves,
                         'user': self.env.user.name,
-                        'subject': 'ADDED' if line_id.location_id.name == 'Inventory adjustment' else 'DEDUCTED'
+                        'subject': 'Added' if line_id.location_id.name == 'Inventory adjustment' else 'Deducted'
                     }
                     template = self.env.ref(
                         'email_and_notification.mail_template_quantity_update').sudo()
