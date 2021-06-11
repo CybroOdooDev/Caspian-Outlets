@@ -8,18 +8,16 @@
             <field name="email_from">${ctx.get('from')}</field>
             <field name="body_html">
                 <![CDATA[
-                    <h4>Purchase Order : ${object.name}</h4>
+                    <h4>Inventory Adjustment: Product ${ctx.get('subject')}</h4>
                     Validated by : <strong>${ctx.get('user')}</strong><br/>
-                    <span style="text-align: right; right:20px;">Total : <strong>${ctx.get('Total')}</strong><br/></span>
                     <table>
                         <thead>
                             <tr>
                                 <th style="text-align: left;">Date</th>
                                 <th style="text-align: left;">Product</th>
+                                <th style="text-align: left;">From</th>
+                                <th style="text-align: left;">To</th>
                                 <th style="text-align: left;">Quantity</th>
-                                <th style="text-align: left;">Unit Price</th>
-                                <th style="text-align: left;">Sub Total</th>
-
                             </tr>
                         </thead>
                         % set moves = ctx['moves']
@@ -27,10 +25,9 @@
                          <tr>
                             <td style="width: 30%; font-size: 13px;">${line['date']}</td>
                             <td style="width: 25%; font-size: 13px;">${line['product']}</td>
+                            <td style="width: 25%; font-size: 13px;">${line['from']}</td>
+                            <td style="width: 20%; font-size: 13px;">${line['to']}</td>
                             <td style="width: 5%; font-size: 13px;">${line['quantity']}</td>
-                            <td style="width: 25%; font-size: 13px;">${line['unit price']}</td>
-                            <td style="width: 20%; font-size: 13px;">${line['subtotal']}</td>
-
                          </tr>
                         % endfor
                     </table>
