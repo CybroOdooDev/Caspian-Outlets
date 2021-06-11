@@ -54,10 +54,11 @@ class StockMoveLine(models.Model):
                         'email': email,
                         'from': self.env.user.email,
                         'moves': moves,
-                        'user': self.env.user.name
+                        'user': self.env.user.name,
+                        'subject': 'ADDED' if line_id.location_id.name == 'Inventory adjustment' else 'DEDUCTED'
                     }
                     template = self.env.ref(
-                        'caspian_outlets.mail_template_inventory').sudo()
+                        'email_and_notification.mail_template_quantity_update').sudo()
                     template.with_context(data).send_mail(
                         self.id, force_send=True)
             return line_id

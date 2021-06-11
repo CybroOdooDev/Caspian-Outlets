@@ -14,12 +14,7 @@
     'website': 'https://www.cybrosys.com',
     'depends': ['stock'],
     'data': [
-        # 'views/assets.xml'
-    ],
-    'qweb': [
-        # 'static/src/xml/product_stock.xml',
-        # 'static/src/xml/customer_receipt.xml',
-        # 'static/src/xml/kiosk.xml',
+        'data/mail_template.xml',
     ],
     'installable': True,
     'auto_install': False,
