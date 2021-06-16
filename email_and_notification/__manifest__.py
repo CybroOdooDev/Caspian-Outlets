@@ -7,14 +7,15 @@
     'summary': """
         Mr Emmanuel's requirements on emails and notifications
     """,
-    'description': """Includes""",
+    'description': """Includes 1)Email when someone update quantity
+    				2)when purchased products are received""",
     'author': 'Cybrosys Techno Solutions',
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': 'https://www.cybrosys.com',
-    'depends': ['stock'],
+    'depends': ['stock', 'purchase'],
     'data': [
-        'data/mail_template.xml',
+        'data/mail_template.xml'
     ],
     'installable': True,
     'auto_install': False,
