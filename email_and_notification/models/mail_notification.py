@@ -28,6 +28,7 @@ class StockPicking(models.Model):
                 demand = 0
                 total_demand = 0
                 total_received = 0
+                total_subtotal = 0
                 for line in po_id.order_line:
                     move = {
                         'product': line.product_id.name,
@@ -36,6 +37,7 @@ class StockPicking(models.Model):
                         'unit_price': line.price_unit,
                         'price_subtotal': line.price_subtotal
                     }
+                    total_subtotal += line.price_subtotal
                     total_demand += line.product_qty
                     total_received += line.qty_received
                     if line.qty_received != line.product_qty:
@@ -57,7 +59,8 @@ class StockPicking(models.Model):
                         'trans_ref': (', '.join(trans_ref_list)),
                         'demand': 'YES' if demand > 1 else 'NO',
                         'total_demand': total_demand,
-                        'total_received': total_received
+                        'total_received': total_received,
+                        'total_subtotal': total_subtotal
                     }
                     template = self.env.ref(
                         'email_and_notification.mail_template_receive_product').sudo()
