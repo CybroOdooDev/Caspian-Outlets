@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pos_make_payment_pos_manager,pos.make.payment pos manager,point_of_sale.model_pos_make_payment,point_of_sale.group_pos_manager,1,1,1,0
+access_pos_make_payment_group_accountant,pos.make.payment group accountant,point_of_sale.model_pos_make_payment,pos_disable_all.group_accountant,1,1,1,0
+access_pos_make_payment_group_senior,pos.make.payment group senior,point_of_sale.model_pos_make_payment,pos_disable_all.group_senior,1,1,1,0
