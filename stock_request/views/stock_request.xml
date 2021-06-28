@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_warehouse_auth_emp_form" model="ir.ui.view">
+        <field name="name">stock.warehouse.form.auth.emp</field>
+        <field name="model">stock.warehouse</field>
+        <field name="inherit_id" ref="stock.view_warehouse"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="auth_employee" widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+
+    <data noupdate="1">
+        <record id="sequence_number" model="ir.sequence">
+            <field name="name">Stock Request Sequence Number</field>
+            <field name="code">sequence.request.number</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+
+    <record id="action_stock_request" model="ir.actions.act_window">
+        <field name="name">Stock Request</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.request</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Stock Request !
+            </p>
+        </field>
+    </record>
+
+    <record id="stock_request_tree" model="ir.ui.view">
+        <field name="name">Stock Request: Tree</field>
+        <field name="model">stock.request</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="create_uid"/>
+                <field name="source_location_id"/>
+                <field name="dest_location_id"/>
+                <field name="done_date"/>
+                <field name="state" decoration-info="state == 'request_sent'"
+                       decoration-warning="state == 'partial' or state == 'progress'"
+                       decoration-success="state == 'done'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="stock_request_form" model="ir.ui.view">
+        <field name="name">Stock Request: Form</field>
+        <field name="model">stock.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="button_sent_request" string="Sent Request"
+                            type="object" class="btn-primary oe_read_only"
+                            attrs="{'invisible': [('state','!=',('draft'))]}"/>
+                    <button name="button_proceed_transfer"
+                            string="Proceed To Transfer"
+                            type="object" class="btn-primary oe_read_only"
+                            attrs="{'invisible': [('state','!=',('request_sent'))]}"
+                            groups="stock.group_stock_manager,stock_request.group_procurement_officer"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="button_internal_tx" type="object"
+                                class="oe_stat_button"
+                                icon="fa-arrows-v" string="Internal Transfer"
+                                attrs="{'invisible': [('internal_tx_id', '=', False)]}"
+                                groups="stock.group_stock_manager,stock_request.group_procurement_officer">
+                        </button>
+                    </div>
+                    <div class="text-truncate w-100">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="create_uid" readonly="1"/>
+                            <field name="picking_type_id"
+                                   attrs="{'readonly':[('state','in',['draft','request_sent','progress','partial','done'])]}"/>
+                            <field name="source_location_id"/>
+                            <field name="dest_location_id"
+                                   attrs="{'readonly':[('state','in',['draft','request_sent','progress','partial','done'])]}"/>
+                        </group>
+                        <group>
+                            <field name="internal_tx_id" readonly="1"/>
+                            <field name="request_date" readonly="1"/>
+                            <field name="done_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Products &amp; Demand"
+                              name="stock_request_line">
+                            <field name="stock_req_line_ids"
+                                   attrs="{'readonly':[('state','in',['request_sent','progress','partial','done'])]}">
+                                <tree string="Product lines" editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id" required="1"/>
+                                    <field name="demand_qty" required="1"/>
+                                    <field name="done_qty" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes" name="note">
+                            <field name="note" placeholder="Notes."
+                                   attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <menuitem id="stock_request"
+              name="Stock Request"
+              parent="stock.menu_stock_warehouse_mgmt"
+              sequence="6"
+              action="stock_request.action_stock_request"
+              groups="stock.group_stock_manager,stock_request.group_procurement_officer,stock_request.group_auth_employee"/>
+</odoo>
