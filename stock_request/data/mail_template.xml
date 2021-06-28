@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+
+        <record id="mail_template_stock_request" model="mail.template">
+            <field name="name">Stock Request</field>
+            <field name="model_id" ref="stock_request.model_stock_request"/>
+            <field name="subject">Stock Request From ${ctx.get('subject')}</field>
+            <field name="email_to">${ctx.get('email')}</field>
+            <field name="email_from">${ctx.get('from')}</field>
+            <field name="body_html">
+                <![CDATA[
+                    Hai ${ctx.get('to')} <br/>
+                    <strong>${ctx.get('user')}</strong> has created a new
+                    Stock request for <strong>${ctx.get('dest_loc')}</strong>
+                    Please do the necessary actions.<br/>
+                 ]]>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

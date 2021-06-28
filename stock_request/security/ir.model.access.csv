@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stock_request_procurement_officer,stock.request.procurement.officer,model_stock_request,stock_request.group_procurement_officer,1,1,1,0
+access_stock_request_auth_employee,stock.request.auth.employee,model_stock_request,stock_request.group_auth_employee,1,1,1,0
+access_stock_request_stock_manager,stock.request.stock.manager,model_stock_request,stock.group_stock_manager,1,1,1,1
+access_stock_request_line_procurement_officer,stock.request.line.procurement.officer,model_stock_request_line,stock_request.group_procurement_officer,1,1,1,0
+access_stock_request_line_auth_employee,stock.request.line.auth.employee,model_stock_request_line,stock_request.group_auth_employee,1,1,1,0
+access_stock_request_line_stock_manager,stock.request.line.stock.manager,model_stock_request_line,stock.group_stock_manager,1,1,1,1
