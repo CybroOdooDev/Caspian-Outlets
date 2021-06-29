@@ -68,7 +68,7 @@ class StockRequest(models.Model):
     create_uid = fields.Many2one('res.users', 'Created by', index=True,
                                  default=lambda self: self.env.user,
                                  store=True, readonly=True)
-    picking_type_id = fields.Many2one('stock.picking.type', 'Warehouse',
+    picking_type_id = fields.Many2one('stock.picking.type', 'Source Warehouse',
                                       required=True,
                                       domain=[('name', '=',
                                                'Internal Transfers')])
