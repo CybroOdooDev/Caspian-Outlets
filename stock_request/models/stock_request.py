@@ -207,7 +207,6 @@ class StockRequest(models.Model):
                 [('id', '=', vals['picking_type_id'])])
             dest_loc = self.env['stock.location'].search(
                 [('id', '=', vals['dest_location_id'])])
-            auth_user = []
             seq_number = self.env['ir.sequence'].next_by_code(
                 'sequence.request.number')
             name = "SREQ" + "/" + str(
