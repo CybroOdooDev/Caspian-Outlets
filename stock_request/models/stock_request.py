@@ -16,7 +16,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     def _action_done(self):
-        """Function search for stock picking with field origin having having
+        """Function search for stock picking with field origin having
          stock request name, it finds that stock request and update the
          quantity of product in product lines with respect to internal
          transfer orderlines"""
@@ -44,6 +44,61 @@ class StockPicking(models.Model):
         else:
             return res
 
+    @api.depends('move_type', 'immediate_transfer', 'move_lines.state',
+                 'move_lines.picking_id')
+    def _compute_state(self):
+        """
+        Function modified to set new state.
+        State of a picking depends on the state of its related stock.move
+        - Draft: only used for "planned pickings"
+        - Waiting: if the picking is not ready to be sent so if
+          - (a) no quantity could be reserved at all or if
+          - (b) some quantities could be reserved and the shipping policy is
+                "deliver all at once"
+        - Waiting another move: if the picking is waiting for another move
+        - Ready: if the picking is ready to be sent so if:
+          - (a) all quantities are reserved or if
+          - (b) some quantities could be reserved and the shipping policy is
+                "as soon as possible"
+        - Done: if the picking is done.
+        - Cancelled: if the picking is cancelled
+        """
+        for picking in self:
+            if not picking.move_lines:
+                picking.state = 'draft'
+            elif any(move.state == 'draft' for move in
+                     picking.move_lines):  # TDE FIXME: should be all ?
+                picking.state = 'draft'
+            elif all(move.state == 'cancel' for move in picking.move_lines):
+                picking.state = 'cancel'
+            elif all(
+                    move.state in [
+                        'cancel', 'done'] for move in picking.move_lines):
+                picking.state = 'done'
+                if picking.origin:
+                    purchase_order_id = self.env['purchase.order'].search(
+                        [('name', '=', picking.origin)])
+                    receipts_ids = self.env['stock.picking'].search(
+                        [('name', 'like', '/IN/'),
+                         ('origin', '=', purchase_order_id.name)])
+                    if receipts_ids:
+                        if all(receipt.state == 'done' for receipt in
+                               receipts_ids):
+                            purchase_order_id.write({'state': 'received'})
+                        elif any(receipt.state == 'done' for receipt in
+                                 receipts_ids):
+                            purchase_order_id.write({'state': 'partial'})
+            else:
+                relevant_move_state = \
+                    picking.move_lines._get_relevant_state_among_moves()
+                if picking.immediate_transfer and \
+                        relevant_move_state not in ('draft', 'cancel', 'done'):
+                    picking.state = 'assigned'
+                elif relevant_move_state == 'partially_available':
+                    picking.state = 'assigned'
+                else:
+                    picking.state = relevant_move_state
+
 
 class StockRequestLine(models.Model):
     _name = 'stock.request.line'
@@ -65,20 +120,19 @@ class StockRequest(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Reference', default='New')
-    create_uid = fields.Many2one('res.users', 'Created by', index=True,
-                                 default=lambda self: self.env.user,
-                                 store=True, readonly=True)
-    picking_type_id = fields.Many2one('stock.picking.type', 'Source Warehouse',
-                                      required=True,
-                                      domain=[('name', '=',
-                                               'Internal Transfers')])
-    source_location_id = fields.Many2one('stock.location',
-                                         string='Source Location', store=True,
-                                         domain=[('usage', '=', 'internal')],
-                                         related='picking_type_id.default_location_src_id')
-    dest_location_id = fields.Many2one('stock.location', required=True,
-                                       string='Destination Location',
-                                       domain=[('usage', '=', 'internal')])
+    create_uid = fields.Many2one(
+        'res.users', 'Created by', index=True,
+        default=lambda self: self.env.user, store=True, readonly=True)
+    picking_type_id = fields.Many2one(
+        'stock.picking.type', 'Source Warehouse', required=True,
+        domain=[('name', '=', 'Internal Transfers')])
+    source_location_id = fields.Many2one(
+        'stock.location', string='Source Location',
+        related='picking_type_id.default_location_src_id',
+        domain=[('usage', '=', 'internal')], store=True)
+    dest_location_id = fields.Many2one(
+        'stock.location', required=True, string='Destination Location',
+        domain=[('usage', '=', 'internal')])
     request_date = fields.Datetime(string='Request Date',
                                    default=fields.Datetime.now())
     done_date = fields.Datetime(string='Done Date')
@@ -104,7 +158,7 @@ class StockRequest(models.Model):
         }
 
     def button_sent_request(self):
-        """Sent notification, mail to procurement officers when an ne Stock
+        """Sent notification, mail to procurement officers whenever a Stock
          Request is created"""
         message_id = self.env['mail.message'].create({
             'model': 'stock.request',
@@ -135,8 +189,10 @@ class StockRequest(models.Model):
                 'from': self.env.user.email,
                 'user': self.env.user.name,
                 'subject': str(self.dest_location_id.location_id.name),
-                'dest_loc': self.env['stock.warehouse'].search([('code', '=',
-                                                                 self.dest_location_id.location_id.name)]).name
+                'dest_loc': self.env[
+                    'stock.warehouse'].search(
+                    [('code', '=',
+                      self.dest_location_id.location_id.name)]).name
             }
             template = self.env.ref(
                 'stock_request.mail_template_stock_request').sudo()
@@ -228,3 +284,44 @@ class StockRequest(models.Model):
             error_message = _("You are not an Authorized person to create a "
                               "stock request for %s !") % dest_warehouse.name
             raise UserError(error_message)
+
+
+class PurchaseOrder(models.Model):
+    _inherit = "purchase.order"
+
+    state = fields.Selection(
+        selection_add=[
+            ('partial', 'Partially Received'), ('received', 'Received')],
+        ondelete={'partial': lambda self: self.set_state(),
+                  'received': lambda self: self.set_state()})
+
+    def set_state(self):
+        """Function to set state of purchase order from 'Received' or
+        'Partially Received' to 'Locked' if lock confirmed order is enabled
+        unless to 'Purchase Order'"""
+        lock_order = self.env['res.config.settings'].search(
+            [('lock_confirmed_po', '=', True)])
+        print('lock_order:  ', lock_order)
+        for record in self:
+            if record.state in ['received', 'partial']:
+                print("name:  ", record.name, "state:  ", record.state)
+                if lock_order:
+                    record.state = 'done'
+                else:
+                    record.state = 'purchase'
+
+    def _update_purchase_order_state(self):
+        """
+        This function is used to update state of purchase orders. The state of
+        purchase orders, with receipts in done state, will be set as 'Received'.
+        If there is any backorder, the state will be set as 'Partially Received'
+        """
+        records = self.search([])
+        for record in records:
+            receipts_ids = self.env['stock.picking'].search(
+                [('name', 'like', '/IN/'), ('origin', '=', record.name)])
+            if receipts_ids:
+                if all(receipt.state == 'done' for receipt in receipts_ids):
+                    record.write({'state': 'received'})
+                elif any(receipt.state == 'done' for receipt in receipts_ids):
+                    record.write({'state': 'partial'})
