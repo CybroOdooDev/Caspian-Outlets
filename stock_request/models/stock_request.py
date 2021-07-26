@@ -24,13 +24,14 @@ class StockPicking(models.Model):
         stock_request_id = self.env['stock.request'].search(
             [('name', '=', self.origin)])
         if stock_request_id:
-            if self.state is 'done':
+            if self.state == 'done':
                 demand = done = 0
                 for rec in stock_request_id.stock_req_line_ids:
                     product_line_id = self.env['stock.request.line'].search(
                         [('id', '=', int(rec))])
                     for rec2 in self.move_ids_without_package:
-                        if product_line_id.product_id.name == rec2.product_id.name:
+                        if product_line_id.product_id.name == \
+                                rec2.product_id.name:
                             product_line_id.done_qty += rec2.quantity_done
                             demand += product_line_id.demand_qty
                             done += product_line_id.done_qty
@@ -147,6 +148,17 @@ class StockRequest(models.Model):
                                          string='Product List', store=True)
     note = fields.Text(string='Notes')
 
+    @api.onchange('dest_location_id')
+    def _onchange_dest_location_id(self):
+        location_id = self.dest_location_id.location_id
+        for iterate in range(0, 10):
+            if location_id.location_id.name == 'Physical Locations':
+                break
+            location_id = location_id.location_id
+        destination_warehouse_id = self.env['stock.warehouse'].search(
+            [('code', '=', location_id.name)])
+        print(destination_warehouse_id.name)
+
     def button_internal_tx(self):
         """Redirect to the list of internal transfers record"""
         return {
@@ -160,6 +172,13 @@ class StockRequest(models.Model):
     def button_sent_request(self):
         """Sent notification, mail to procurement officers whenever a Stock
          Request is created"""
+        location_id = self.dest_location_id.location_id
+        for iterate in range(0, 10):
+            if location_id.location_id.name == 'Physical Locations':
+                break
+            location_id = location_id.location_id
+        destination_warehouse_id = self.env['stock.warehouse'].search(
+            [('code', '=', location_id.name)])
         message_id = self.env['mail.message'].create({
             'model': 'stock.request',
             'res_id': self.id,
@@ -168,31 +187,38 @@ class StockRequest(models.Model):
             'body': '%s created a new Stock Request' % self.env.user.name,
             'email_from': self.env.user.email
         })
-        group = self.env.ref('stock_request.group_procurement_officer')
-        procurement_officers = []
-        procurement_officers_email = []
-        for user in group.users:
-            procurement_officers.append(user.partner_id.id)
-        for this_user in procurement_officers:
-            user_id = self.env['res.partner'].browse(this_user)
-            procurement_officers_email.append(user_id.email)
-            notification = self.env['mail.notification'].create({
+        procurement_officer_ids = self.env['res.users'].search(
+            [('id', 'in', (self.env['res.groups'].search(
+                [('name', 'ilike', 'Procurement Officer')]).users).ids)])
+        procurement_officers_emails = []
+        for procurement_officer_id in procurement_officer_ids:
+            procurement_officers_emails.append(procurement_officer_id.email)
+            self.env['mail.notification'].create({
                 'mail_message_id': message_id.id,
                 'notification_type': 'inbox',
-                'res_partner_id': this_user
+                'res_partner_id': procurement_officer_id.partner_id.id,
             })
-        for email in procurement_officers_email:
+        request_lines = []
+        total = 0
+        for line in self.stock_req_line_ids:
+            subtotal = line.demand_qty * line.product_id.standard_price
+            request_line = {
+                'product': line.product_id.name,
+                'demand': line.demand_qty,
+                'unit_price': line.product_id.standard_price,
+                'subtotal': subtotal,
+            }
+            total += subtotal
+            request_lines.append(request_line)
+        print("Request Lines :", request_lines)
+        for email in procurement_officers_emails:
             data = {
                 'email': email,
-                'to': self.env['res.users'].search(
-                    [('login', '=', email)]).name,
                 'from': self.env.user.email,
                 'user': self.env.user.name,
-                'subject': str(self.dest_location_id.location_id.name),
-                'dest_loc': self.env[
-                    'stock.warehouse'].search(
-                    [('code', '=',
-                      self.dest_location_id.location_id.name)]).name
+                'destination_warehouse': destination_warehouse_id.name,
+                'request_lines': request_lines,
+                'total': total,
             }
             template = self.env.ref(
                 'stock_request.mail_template_stock_request').sudo()

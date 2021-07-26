@@ -11,7 +11,7 @@ class StockPicking(models.Model):
         res = super(StockPicking, self)._action_done()
         po_id = self.env['purchase.order'].search([('name', '=', self.origin)])
         if po_id:
-            if self.state is 'done':
+            if self.state == 'done':
                 group = self.env.ref('pos_disable_all.group_admin')
                 admins = []
                 admins_email = []

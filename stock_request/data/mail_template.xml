@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data>
+    <data noupdate = "0">
 
         <record id="mail_template_stock_request" model="mail.template">
             <field name="name">Stock Request</field>
             <field name="model_id" ref="stock_request.model_stock_request"/>
-            <field name="subject">Stock Request From ${ctx.get('subject')}</field>
+            <field name="subject">Stock Request From ${ctx.get('destination_warehouse')}</field>
             <field name="email_to">${ctx.get('email')}</field>
             <field name="email_from">${ctx.get('from')}</field>
             <field name="body_html">
                 <![CDATA[
-                    Hai ${ctx.get('to')} <br/>
-                    <strong>${ctx.get('user')}</strong> has created a new
-                    Stock request for <strong>${ctx.get('dest_loc')}</strong>
-                    Please do the necessary actions.<br/>
+                    <p style="margin: 10px 0px; padding: 0px;">Stock Request : <strong>${object.name}</strong></p>
+                    <p style="margin: 0px; padding: 0px;">Requested By : <strong>${object.create_uid.name}</strong></p>
+                    <p style="margin: 0px; padding: 0px;">Sending Warehouse : <strong>${object.picking_type_id.warehouse_id.name}</strong></p>
+                    <p style="margin: 0px; padding: 0px;">Receiving Warehouse : <strong>${ctx.get('destination_warehouse')}</strong></p>
+                    <p style="margin: 0px; padding: 0px;">Date : <strong>${object.request_date}</strong></p>
+                    <p style="margin: 10px 0px; padding: 0px;">Total Amount: <strong>${ctx.get('total')}</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Product</th>
+                                <th style="text-align: left;">Demand</th>
+                                <th style="text-align: left;">Unit Price</th>
+                                <th style="text-align: left;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        % set request_lines = ctx['request_lines']
+                        % for line in request_lines
+                         <tr>
+                            <td style="width: 35%; font-size: 13px;">${line['product']}</td>
+                            <td style="width: 15%; font-size: 13px;">${line['demand']}</td>
+                            <td style="width: 20%; font-size: 13px;">${line['unit_price']}</td>
+                            <td style="width: 20%; font-size: 13px;">${line['subtotal']}</td>
+                         </tr>
+                        % endfor
+                    </table>
                  ]]>
             </field>
             <field name="auto_delete" eval="True"/>

@@ -2,7 +2,7 @@
 
 {
     'name': 'Stock Request',
-    'version': '14.0.1.0.0',
+    'version': '14.0.1.1.0',
     'category': 'Inventory',
     'summary': """
         Mr Emmanuel's requirements on stock request from warehouse
